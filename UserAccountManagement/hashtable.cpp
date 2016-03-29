@@ -110,7 +110,8 @@ bool HashTable::Search(UserAccount acct) const{
     //   if a matching parameter is found, otherwise return NULL
 UserAccount* HashTable::Retrieve(UserAccount acct){
     //TODO:
-    return table;
+    UserAccount* someAccount;
+    return someAccount;
 };
     
     // Returns the number of items stored in the hash table

@@ -222,6 +222,10 @@ void LLTest(){
 void HTTest(){
     HashTable ht1; //hash table of size 101
     HashTable ht2(10);//hash table of 10?
+    
+    
+
+    
     ht1.Size();
     ht1.MaxSize();//size of underlying array
     ht1.ListAt(0);

@@ -99,7 +99,7 @@ HashTable:: HashTable(const HashTable& sourceht){
     size = sourceht.size;
     maxsize = sourceht.maxsize;
     table = new SLinkedList<UserAccount>[maxsize];
-    //copy(sourceht.table, sourceht.table+sourceht.maxsize, table);
+    copy(sourceht.table, sourceht.table+sourceht.maxsize, table);
 }
     
     // destructor

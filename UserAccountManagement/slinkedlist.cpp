@@ -124,6 +124,15 @@ vector<T> SLinkedList<T>:: Dump() const{
 template <class T>
 SLinkedList<T>& SLinkedList<T>::operator=(const SLinkedList& ll){
     //TODO
+    if (this == &ll) {
+        return *this;
+    }else{
+        SLinkedList* temp = new SLinkedList<T>(ll);
+        front = temp->front;
+        back = temp->back;
+        size = temp->size;
+        return *temp;
+    }
 }
 
 #endif

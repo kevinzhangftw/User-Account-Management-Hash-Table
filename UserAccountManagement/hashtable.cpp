@@ -7,6 +7,7 @@
 //
 
 #include "hashtable.hpp"
+#include <algorithm>
 using namespace std;
 
 //private:
@@ -27,14 +28,20 @@ int HashTable::Hash(string input) const{
     
     // helper function to find smallest prime number greater than supplied parameter
 int HashTable:: SmallestPrime(int n) const{
-    //TODO:
+    int i = n +1;
+    while (1) {
+        if (IsPrime(i)) {
+            return i;
+        }else{
+            i++;
+        }
+    }
     return 0;
 }
     
     // helper function to determine whether a number is prime
 bool HashTable:: IsPrime(int n) const{
     bool isPrime = true;
-    
     for (int i = 2; i < n; i++) {
         if (n % i == 0) {
             isPrime = false;
@@ -50,7 +57,19 @@ bool HashTable:: IsPrime(int n) const{
     //   and re-hash all contents into the new array, delete the old array and return true.
 bool HashTable:: Resize(int n){
     //TODO:
-    return false;
+    // if n is smaller than current array size or if n is negative.
+    //return false
+    if (n < maxsize or n < 0) {
+        return false;
+    }else{
+        maxsize = SmallestPrime(n);
+        SLinkedList<UserAccount>* temp = table;
+        //re-hash all contents into the new array
+        
+        delete[] temp;
+        
+        return true;
+    }
 }
     
     // write your own private member functions in the following file
@@ -62,25 +81,30 @@ bool HashTable:: Resize(int n){
 HashTable:: HashTable(){
     size = 0;
     maxsize = 101;
-    table = new SLinkedList<UserAccount>[101];
+    table = new SLinkedList<UserAccount>[maxsize];
 }
     
     // parameterized constructor
     // creates an array of size = smallest prime number > 2n
 HashTable:: HashTable(int n){
-    //TODO:
-    // creates an array of size = smallest prime number > 2n
+    size = 0;
+    maxsize = SmallestPrime(2*n);
+    table = new SLinkedList<UserAccount>[maxsize];
 }
     
     // copy constructor
     // Creates deep copy of sourceht
 HashTable:: HashTable(const HashTable& sourceht){
     //TODO:
+    size = sourceht.size;
+    maxsize = sourceht.maxsize;
+    table = new SLinkedList<UserAccount>[maxsize];
+    //copy(sourceht.table, sourceht.table+sourceht.maxsize, table);
 }
     
     // destructor
 HashTable::~HashTable(){
-    //TODO:
+    delete[] table;
 }
     
     // overloaded assignment operator

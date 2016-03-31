@@ -24,7 +24,7 @@ void SLinkedList<T>::CopyList(const SLinkedList& ll){
 // Used by destructor and copy/assignment
 template <class T>
 void SLinkedList<T>::DeleteList(){
-   //TODO
+    RemoveAll();
 }
 
 //public:
@@ -39,14 +39,12 @@ SLinkedList<T>::SLinkedList(){
 // copy constructor, performs deep copy of list elements
 template <class T>
 SLinkedList<T>::SLinkedList(const SLinkedList& ll){
-    //TODO
     CopyList(ll);
 }
 
 // destructor
 template <class T>
 SLinkedList<T>::~SLinkedList(){
-   //TODO
     DeleteList();
 }
 
@@ -88,21 +86,58 @@ void SLinkedList<T>::InsertBack(T item){
 // Removes and returns true if found, otherwise returns false if parameter is not found or list is empty
 template <class T>
 bool SLinkedList<T>::Remove(T item){
-    //TODO
-    if (Contains(item)==true) {
+    if (Contains(item)==true){
         //begin remove procedure
-        
-        size--;
-        return true;
-    }else{
-       return false;
+        if (front->data == item) { //remove front node
+            Node<T>* temp = front;
+            front = front->next;
+            delete temp;
+            size--;
+            return true;
+        }else if (back->data == item){ //remove back node
+            Node<T>* current = front->next;
+            while (current->next != back) {
+                current = current->next;
+            } //now current should be previous of back
+            Node<T>* temp = back;
+            back = current;
+            back->next = NULL;
+            delete temp;
+            size--;
+            return true;
+        }else{
+            //node must be somewhere in the middle
+            Node<T>* beforeCurrent = front;
+            Node<T>* current = front->next;
+            while (current != back){
+                if (current->data == item){
+                    beforeCurrent->next = current->next;
+                    delete current;
+                    return true;
+                }
+                beforeCurrent = beforeCurrent->next;
+                current = current->next;
+            }
+            size--;
+            return true;
+        }
     }
+    return false; //item not found
 }
 
 // Removes all items in the list
 template <class T>
 void SLinkedList<T>::RemoveAll(){
-    //TODO
+    if (front == NULL) return;
+    Node<T>* currentNode = front;
+    while (currentNode != NULL) {
+        Node<T>* temp = currentNode;
+       currentNode = currentNode->next;
+        delete temp;
+    }
+    size = 0;
+    front = NULL;
+    back = NULL;
 }
 
 // ACCESSORS
@@ -126,7 +161,6 @@ bool SLinkedList<T>::Contains(T item) const{
     if (front == NULL) {
         return false;
     }
-    
     Node<T>* currentNode = front;
     while (currentNode != NULL) {
         if (currentNode->data == item) {
@@ -135,7 +169,6 @@ bool SLinkedList<T>::Contains(T item) const{
             currentNode = currentNode->next;
         }
     }
-    
     return false;
 }
 

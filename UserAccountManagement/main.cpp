@@ -205,6 +205,18 @@ void PrintMenu(bool loginstatus, int ulevel){
     }
 }
 
+void destructorTest(){
+    SLinkedList<int> llx;
+    
+    llx.InsertBack(2);
+    llx.InsertFront(1);
+    llx.InsertBack(3);
+    llx.InsertBack(4);
+    llx.InsertBack(5);
+    llx.InsertBack(10);
+    llx.InsertBack(20);
+}
+
 void LLTest(){
     SLinkedList<int> lla;
     
@@ -216,7 +228,11 @@ void LLTest(){
     lla.InsertBack(10);
     lla.InsertBack(20);
     
-    lla.Contains(5); //check to see 5 is in lla
+    destructorTest();
+    
+    //lla.RemoveAll();
+    //lla.Contains(5); //check to see 5 is in lla
+    
     vector<int> v1 = lla.Dump(); //get lla list in v1
     lla.InsertBack(2);
     lla.InsertFront(1);

@@ -31,19 +31,23 @@ void SLinkedList<T>::DeleteList(){
 // default constructor
 template <class T>
 SLinkedList<T>::SLinkedList(){
-    //TODO
+    size=0;
+    front=NULL;
+    back=NULL;
 }
 
 // copy constructor, performs deep copy of list elements
 template <class T>
 SLinkedList<T>::SLinkedList(const SLinkedList& ll){
     //TODO
+    CopyList(ll);
 }
 
 // destructor
 template <class T>
 SLinkedList<T>::~SLinkedList(){
    //TODO
+    DeleteList();
 }
 
 // MUTATORS
@@ -53,7 +57,15 @@ SLinkedList<T>::~SLinkedList(){
 // PARAM: item = item to be inserted
 template <class T>
 void SLinkedList<T>::InsertFront(T item){
-    //TODO
+    if (front == NULL) {
+        back = front = new Node<T>(item);
+        size++;
+    }else{
+        Node<T>* node = new Node<T>(item);
+        node->next = front;
+        front = node;
+        size++;
+    }
 }
 
 // Inserts an item at the back of the list
@@ -61,7 +73,15 @@ void SLinkedList<T>::InsertFront(T item){
 // PARAM: item = item to be inserted
 template <class T>
 void SLinkedList<T>::InsertBack(T item){
-    //TODO
+    if (front == NULL) { // same as insert front
+        back = front = new Node<T>(item);
+        size++;
+    }else{
+        Node<T>* node = new Node<T>(item);
+        back->next = node;
+        back = back->next;
+        size++;
+    }
 }
 
 // Removes the first occurrence of the supplied parameter
@@ -69,7 +89,14 @@ void SLinkedList<T>::InsertBack(T item){
 template <class T>
 bool SLinkedList<T>::Remove(T item){
     //TODO
-    return false;
+    if (Contains(item)==true) {
+        //begin remove procedure
+        
+        size--;
+        return true;
+    }else{
+       return false;
+    }
 }
 
 // Removes all items in the list
@@ -83,21 +110,32 @@ void SLinkedList<T>::RemoveAll(){
 // Returns size of list
 template <class T>
 int SLinkedList<T>::Size() const{
-    //TODO
-    return 0;
+    return size;
 }
 
 // Returns whether the list is empty
 template <class T>
 bool SLinkedList<T>::IsEmpty() const{
-    //TODO
+    if (size==0) return true;
     return false;
 }
 
 // Returns existence of item
 template <class T>
 bool SLinkedList<T>::Contains(T item) const{
-    //TODO
+    if (front == NULL) {
+        return false;
+    }
+    
+    Node<T>* currentNode = front;
+    while (currentNode != NULL) {
+        if (currentNode->data == item) {
+            return true; //item found
+        }else{
+            currentNode = currentNode->next;
+        }
+    }
+    
     return false;
 }
 
@@ -123,7 +161,6 @@ vector<T> SLinkedList<T>:: Dump() const{
 // list2 = list2 -> should do nothing
 template <class T>
 SLinkedList<T>& SLinkedList<T>::operator=(const SLinkedList& ll){
-    //TODO
     if (this == &ll) {
         return *this;
     }else{

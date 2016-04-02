@@ -8,6 +8,7 @@
 
 #include "hashtable.hpp"
 #include <algorithm>
+#include <iostream>
 using namespace std;
 
 //private:
@@ -121,8 +122,24 @@ HashTable& HashTable::operator=(const HashTable& sourceht){
 bool HashTable::Insert(UserAccount acct){
     //TODO:
     // If item does not already exist,
-    // inserts at back of hashed list and returns true
-    //   otherwise returns false
+    if (Search(acct)==true) {
+        return false;
+    }else{
+        size++; //we will insert without fail here
+        //string username = acct.GetUsername();
+        int arrayindex = Hash(acct.GetUsername());
+        if (table[arrayindex].IsEmpty()) {
+            SLinkedList<UserAccount> accountsOnThisLinkedList; //construct new linkedlist
+            accountsOnThisLinkedList.InsertBack(acct);
+            table[arrayindex] = accountsOnThisLinkedList; //attach the linked list
+            return true; //job well done
+        }else{ //table[arrayindex]. Is not Empty
+            //so we have collision here
+            table[arrayindex].InsertBack(acct);
+            return true; // also job well done here
+        }
+    }
+    
     
     // If load factor (before insertion) is above 2/3,
     //expand into a new table of smallest prime number size at least double the present table size
@@ -143,8 +160,8 @@ bool HashTable::Remove(UserAccount acct){
 bool HashTable::Search(UserAccount acct) const{
     string username = acct.GetUsername();
     int arrayindex = Hash(username);
-    //call the search on that slinkedlist
     SLinkedList<UserAccount> currentaccount = table[arrayindex];
+    
     //this will get me a pointer
     UserAccount* userfound=currentaccount.Retrieve(acct);
     //this will get me the bool

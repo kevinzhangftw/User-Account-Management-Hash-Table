@@ -253,11 +253,27 @@ void HTTest(){
     HashTable ht1; //hash table of size 101
     HashTable ht2(10);//hash table of 10?
     
-    bool targetfound = ht1.Search(UserAccount("bob", ADMIN_));
+    ht1.Insert(UserAccount("admin", ADMIN_));
+    ht1.Insert(UserAccount("bob", REGULAR_));
+    ht1.Insert(UserAccount("cat", REGULAR_));
+    ht1.Insert(UserAccount("kai", REGULAR_));
+    ht1.Insert(UserAccount("kevin", REGULAR_));
+    ht1.Insert(UserAccount("june", REGULAR_));
+    ht1.Insert(UserAccount("henry", REGULAR_));
+    ht1.Insert(UserAccount("ken", REGULAR_));
+    ht1.Insert(UserAccount("erne", REGULAR_));
+    ht1.Insert(UserAccount("john", REGULAR_));
+    ht1.Insert(UserAccount("mircea", REGULAR_));
+    ht1.Insert(UserAccount("jordan", REGULAR_));
+    ht1.Insert(UserAccount("engadget", REGULAR_));
+    ht1.Insert(UserAccount("grapes", REGULAR_));
+    ht1.Insert(UserAccount("camvy", REGULAR_));
+    ht1.Insert(UserAccount("transient", REGULAR_));
+    ht1.Insert(UserAccount("oranges", REGULAR_));
+    
+    bool targetfound = ht1.Search(UserAccount("steven", ADMIN_));
     cout << "target found is "<< targetfound << endl;
     UserAccount* userfound = ht1.Retrieve(UserAccount("bob", REGULAR_));
-    
-    ht1.IsPrime(31);
     
     ht1.Size();
     ht1.MaxSize();//size of underlying array

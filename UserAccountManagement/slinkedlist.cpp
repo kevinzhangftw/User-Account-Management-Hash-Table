@@ -18,7 +18,15 @@
 // Used by copy constructor and operator=
 template <class T>
 void SLinkedList<T>::CopyList(const SLinkedList& ll){
-   //TODO 
+   //TODO
+    if (ll.size == 0) {
+        front = NULL;
+        back = NULL;
+        return;
+    }else{
+        //traverse through the node
+        //insert each and every one of the them
+    }
 }
 // helper function for deep delete
 // Used by destructor and copy/assignment
@@ -131,11 +139,11 @@ void SLinkedList<T>::RemoveAll(){
     if (front == NULL) return;
     Node<T>* currentNode = front;
     while (currentNode != NULL) {
-        Node<T>* temp = currentNode;
-       currentNode = currentNode->next;
-        delete temp;
+        front= front->next;
+        delete currentNode;
+        size--;
+        currentNode = front;
     }
-    size = 0;
     front = NULL;
     back = NULL;
 }
@@ -175,7 +183,17 @@ bool SLinkedList<T>::Contains(T item) const{
 // Returns a pointer to the in-place list item or NULL if item not found
 template <class T>
 T* SLinkedList<T>::Retrieve(T item){
-    //TODO
+    T* dataFound;
+    if (front == NULL) return NULL;
+    Node<T>* currentNode = front;
+    while (currentNode != NULL) {
+        if (currentNode->data == item) {
+            dataFound = &currentNode->data;
+            return dataFound; //item found
+        }else{
+            currentNode = currentNode->next;
+        }
+    }
     return NULL;
 }
 

@@ -228,10 +228,10 @@ void LLTest(){
     lla.InsertBack(10);
     lla.InsertBack(20);
     
-    destructorTest();
+    //destructorTest();
     
-    //lla.RemoveAll();
-    //lla.Contains(5); //check to see 5 is in lla
+    lla.RemoveAll();
+    lla.Contains(5); //check to see 5 is in lla
     
     vector<int> v1 = lla.Dump(); //get lla list in v1
     lla.InsertBack(2);

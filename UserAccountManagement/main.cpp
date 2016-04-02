@@ -253,7 +253,11 @@ void HTTest(){
     HashTable ht1; //hash table of size 101
     HashTable ht2(10);//hash table of 10?
     
-
+    bool targetfound = ht1.Search(UserAccount("bob", ADMIN_));
+    cout << "target found is "<< targetfound << endl;
+    UserAccount* userfound = ht1.Retrieve(UserAccount("bob", REGULAR_));
+    
+    ht1.IsPrime(31);
     
     ht1.Size();
     ht1.MaxSize();//size of underlying array

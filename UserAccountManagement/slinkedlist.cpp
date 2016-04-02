@@ -47,7 +47,6 @@ SLinkedList<T>::SLinkedList(const SLinkedList& ll){
         front=NULL;
         back=NULL;
         CopyList(ll);
-    
 }
 
 // destructor

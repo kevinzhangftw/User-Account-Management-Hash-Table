@@ -95,7 +95,6 @@ HashTable:: HashTable(int n){
     // copy constructor
     // Creates deep copy of sourceht
 HashTable:: HashTable(const HashTable& sourceht){
-    //TODO:
     size = sourceht.size;
     maxsize = sourceht.maxsize;
     table = new SLinkedList<UserAccount>[maxsize];
@@ -121,6 +120,13 @@ HashTable& HashTable::operator=(const HashTable& sourceht){
     //   and then insert the item.
 bool HashTable::Insert(UserAccount acct){
     //TODO:
+    // If item does not already exist,
+    // inserts at back of hashed list and returns true
+    //   otherwise returns false
+    
+    // If load factor (before insertion) is above 2/3,
+    //expand into a new table of smallest prime number size at least double the present table size
+    //   and then insert the item.
     return false;
 }
     
@@ -135,17 +141,27 @@ bool HashTable::Remove(UserAccount acct){
     // Search
     // Returns true if item exists, false otherwise
 bool HashTable::Search(UserAccount acct) const{
-    //TODO:
-    return false;
+    string username = acct.GetUsername();
+    int arrayindex = Hash(username);
+    //call the search on that slinkedlist
+    SLinkedList<UserAccount> currentaccount = table[arrayindex];
+    //this will get me a pointer
+    UserAccount* userfound=currentaccount.Retrieve(acct);
+    //this will get me the bool
+    return currentaccount.Contains(acct);
 }
     
     // Retrieval
     // Returns a pointer to a UserAccount object inside the hash table (linked list)
     //   if a matching parameter is found, otherwise return NULL
 UserAccount* HashTable::Retrieve(UserAccount acct){
-    //TODO:
-    UserAccount* someAccount;
-    return someAccount;
+    string username = acct.GetUsername();
+    int arrayindex = Hash(username);
+    //call the search on that slinkedlist
+    SLinkedList<UserAccount> currentaccount = table[arrayindex];
+    //this will get me a pointer
+    UserAccount* userfound=currentaccount.Retrieve(acct);
+    return userfound;
 }
     
     // Returns the number of items stored in the hash table

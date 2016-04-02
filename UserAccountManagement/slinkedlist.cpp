@@ -18,15 +18,11 @@
 // Used by copy constructor and operator=
 template <class T>
 void SLinkedList<T>::CopyList(const SLinkedList& ll){
-   //TODO
-    if (ll.size == 0) {
-        front = NULL;
-        back = NULL;
-        return;
-    }else{
-        //traverse through the node
-        //insert each and every one of the them
-    }
+        Node<T>* currentNode = ll.front;
+        while (currentNode != NULL) {
+            InsertBack(currentNode->data);
+            currentNode = currentNode->next;
+        }
 }
 // helper function for deep delete
 // Used by destructor and copy/assignment
@@ -47,7 +43,11 @@ SLinkedList<T>::SLinkedList(){
 // copy constructor, performs deep copy of list elements
 template <class T>
 SLinkedList<T>::SLinkedList(const SLinkedList& ll){
-    CopyList(ll);
+        size=0;
+        front=NULL;
+        back=NULL;
+        CopyList(ll);
+    
 }
 
 // destructor

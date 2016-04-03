@@ -265,13 +265,13 @@ void HTTest(){
     ht2.Insert(UserAccount("henry", REGULAR_));
     ht2.Insert(UserAccount("ken", REGULAR_));
     
-    bool targetfound = ht2.Search(UserAccount("june", ADMIN_));
-    cout << "target found before resize is "<< targetfound << endl;
+    bool targetfound = ht2.Search(UserAccount("bob", ADMIN_));
+    cout << "target bob found before resize is "<< targetfound << endl;
     
     ht2.Insert(UserAccount("erne", REGULAR_));
     
-    bool targetfound1 = ht2.Search(UserAccount("june", ADMIN_));
-    cout << "target found after resize is "<< targetfound1 << endl;
+    bool targetfound1 = ht2.Search(UserAccount("bob", ADMIN_));
+    cout << "target bob found after resize is "<< targetfound1 << endl;
     
     ht2.Insert(UserAccount("john", REGULAR_));
     ht2.Insert(UserAccount("mircea", REGULAR_));
@@ -282,17 +282,22 @@ void HTTest(){
     ht2.Insert(UserAccount("transient", REGULAR_));
     ht2.Insert(UserAccount("oranges", REGULAR_));
     
+    bool targetfound2 = ht2.Search(UserAccount("transient", ADMIN_));
+    cout << "is tranisent found?  "<< targetfound2 << endl;
+    
     //bool targetfound = ht1.Search(UserAccount("steven", ADMIN_));
     //cout << "target found is "<< targetfound << endl;
     //UserAccount* userfound = ht1.Retrieve(UserAccount("bob", REGULAR_));
     
-    ht1.Size();
-    ht1.MaxSize();//size of underlying array
-    ht1.ListAt(0);
-    ht1.LoadFactor();
-    ht1.Insert(UserAccount("admin", ADMIN_));
-    ht1.Remove(UserAccount("bob", REGULAR_));
-    ht1.Retrieve(UserAccount("bob", REGULAR_));
-    ht1.Search(UserAccount("bob", ADMIN_));
+    ht2.Size();
+    ht2.MaxSize();//size of underlying array
+    ht2.ListAt(0);
+    ht2.LoadFactor();
+    ht2.Insert(UserAccount("admin", ADMIN_));
+    ht2.Remove(UserAccount("bob", REGULAR_));
+    
+    bool targetfound3 = ht2.Search(UserAccount("bob", REGULAR_));
+    cout << "target bob found after removal is "<< targetfound3 << endl;
+    
     HashTable ht3 = ht1;
 }

@@ -61,23 +61,21 @@ bool HashTable:: Resize(int n){
     if (n < maxsize or n < 0) {
         return false;
     }else{
-        HashTable bigghashtable(n);
+        HashTable* bigghashtable = new HashTable(n);
         for (int i = 0; i<maxsize; i++) { //we are going to access all linkedlists in the array
             vector<UserAccount> vectorForTableiPosition = table[i].Dump(); //vector taking a dump
             for (int j=0 ; j<vectorForTableiPosition.size(); j++) { //for every single acct in
-                bigghashtable.Insert(vectorForTableiPosition[j]);//rehash to new table
-                
-
+                bigghashtable->Insert(vectorForTableiPosition[j]);//rehash to new table
             }
         }
         //test code
-        bool targetfound = bigghashtable.Search(UserAccount("kevin", ADMIN_));
+        bool targetfound = bigghashtable->Search(UserAccount("june", ADMIN_));
         cout << "target found bigghashtable is "<< targetfound << endl;
         
         //this = bigghashtable;
-        maxsize = bigghashtable.maxsize; //set array size to the smallest prime number larger than n
+        maxsize = bigghashtable->maxsize; //set array size to the smallest prime number larger than n
         SLinkedList<UserAccount>* temp = table;
-        table = bigghashtable.table;
+        table = bigghashtable->table;
         delete[] temp;
         return true;
     }
@@ -154,7 +152,7 @@ bool HashTable::Insert(UserAccount acct){
     //   otherwise returns false
 bool HashTable::Remove(UserAccount acct){
     //TODO:
-    if (Search(acct)==true) {
+    if (Search(acct)==false) {
         return false;
     }else{
         size--; //we will remove withou fail here

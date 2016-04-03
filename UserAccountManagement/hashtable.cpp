@@ -153,7 +153,8 @@ bool HashTable::Remove(UserAccount acct){
     if (Search(acct)==true) {
         return false;
     }else{
-    return false;
+        //the item
+        return true;
     }
 }
 

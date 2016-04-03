@@ -57,21 +57,27 @@ bool HashTable:: IsPrime(int n) const{
     // Else, set array size to the smallest prime number larger than n
     //   and re-hash all contents into the new array, delete the old array and return true.
 bool HashTable:: Resize(int n){
+    //TODO
     if (n < maxsize or n < 0) {
         return false;
     }else{
-        for (int i = 0; i<maxsize; i++) { //we are going to access all linkedlists
+        HashTable bigghashtable(n);
+        for (int i = 0; i<maxsize; i++) { //we are going to access all linkedlists in the array
             vector<UserAccount> vectorForTableiPosition = table[i].Dump(); //vector taking a dump
-            
             for (int j=0 ; j<vectorForTableiPosition.size(); j++) { //for every single acct in
-                Insert(vectorForTableiPosition[j]); //rehash to new table
-                size++;
+                bigghashtable.Insert(vectorForTableiPosition[j]);//rehash to new table
+                
+
             }
         }
-        int newmaxsize = SmallestPrime(n); //set array size to the smallest prime number larger than n
-        SLinkedList<UserAccount>* newtable= new SLinkedList<UserAccount>[newmaxsize];
+        //test code
+        bool targetfound = bigghashtable.Search(UserAccount("kevin", ADMIN_));
+        cout << "target found bigghashtable is "<< targetfound << endl;
+        
+        //this = bigghashtable;
+        maxsize = bigghashtable.maxsize; //set array size to the smallest prime number larger than n
         SLinkedList<UserAccount>* temp = table;
-        table = newtable;
+        table = bigghashtable.table;
         delete[] temp;
         return true;
     }
@@ -114,6 +120,9 @@ HashTable::~HashTable(){
     // overloaded assignment operator
 HashTable& HashTable::operator=(const HashTable& sourceht){
     //TODO:
+    maxsize = sourceht.maxsize;
+    size = sourceht.size;
+    table = sourceht.table;
     return *this;
 }
     
@@ -128,18 +137,14 @@ bool HashTable::Insert(UserAccount acct){
     if (Search(acct)==true) {
         return false;
     }else{
-        if (LoadFactor() > 2/3) Resize(2*maxsize);
+        double alpha = LoadFactor();
+        if (alpha > (double(2)/double(3))){
+            Resize(maxsize); //double the maxsize is handle inside resize
+        }
         size++; //we will insert without fail here
         //string username = acct.GetUsername();
         int arrayindex = Hash(acct.GetUsername());
-        
-        if (table[arrayindex].IsEmpty()) {
-            SLinkedList<UserAccount> accountsOnThisLinkedList; //construct new linkedlist
-            accountsOnThisLinkedList.InsertBack(acct);
-            table[arrayindex] = accountsOnThisLinkedList; //attach the linked list
-        }else{ //table[arrayindex]. Is not Empty
-            table[arrayindex].InsertBack(acct);
-        }
+        table[arrayindex].InsertBack(acct);
         return true;
     }
 }
@@ -152,7 +157,9 @@ bool HashTable::Remove(UserAccount acct){
     if (Search(acct)==true) {
         return false;
     }else{
-        //the item
+        size--; //we will remove withou fail here
+        int arrayindex = Hash(acct.GetUsername()); //ok we know u r on at this index
+        table[arrayindex].Remove(acct);
         return true;
     }
 }
@@ -196,7 +203,7 @@ int HashTable::MaxSize() const{
     // Returns the load factor as size / maxsize.
     // Note that due to separate chaining, load factor can be > 1.
 double HashTable::LoadFactor() const{
-    return size/maxsize;
+    return (double(size)/double(maxsize));
 }
     
     // Returns a pointer to the linked list at index i

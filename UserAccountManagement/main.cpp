@@ -254,6 +254,7 @@ void LLTest(){
 void HTTest(){
     HashTable ht1; //hash table of size 101
     HashTable ht2(5);//hash table of 10?
+
     
     ht2.Insert(UserAccount("admin", ADMIN_));
     ht2.Insert(UserAccount("bob", REGULAR_));
@@ -263,7 +264,15 @@ void HTTest(){
     ht2.Insert(UserAccount("june", REGULAR_));
     ht2.Insert(UserAccount("henry", REGULAR_));
     ht2.Insert(UserAccount("ken", REGULAR_));
+    
+    bool targetfound = ht2.Search(UserAccount("june", ADMIN_));
+    cout << "target found before resize is "<< targetfound << endl;
+    
     ht2.Insert(UserAccount("erne", REGULAR_));
+    
+    bool targetfound1 = ht2.Search(UserAccount("june", ADMIN_));
+    cout << "target found after resize is "<< targetfound1 << endl;
+    
     ht2.Insert(UserAccount("john", REGULAR_));
     ht2.Insert(UserAccount("mircea", REGULAR_));
     ht2.Insert(UserAccount("jordan", REGULAR_));

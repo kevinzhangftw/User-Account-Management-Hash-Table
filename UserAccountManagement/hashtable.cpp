@@ -65,6 +65,7 @@ bool HashTable:: Resize(int n){
             
             for (int j=0 ; j<vectorForTableiPosition.size(); j++) { //for every single acct in
                 Insert(vectorForTableiPosition[j]); //rehash to new table
+                size++;
             }
         }
         int newmaxsize = SmallestPrime(n); //set array size to the smallest prime number larger than n
@@ -131,16 +132,9 @@ bool HashTable::Insert(UserAccount acct){
         size++; //we will insert without fail here
         //string username = acct.GetUsername();
         int arrayindex = Hash(acct.GetUsername());
-        if (table[arrayindex].IsEmpty()) {
-            
-            SLinkedList<UserAccount> accountsOnThisLinkedList; //construct new linkedlist
-            accountsOnThisLinkedList.InsertBack(acct);
-            table[arrayindex] = accountsOnThisLinkedList; //attach the linked list
-            
-        }else{ //table[arrayindex]. Is not Empty
-            //so we have collision here
-            table[arrayindex].InsertBack(acct);
-        }
+    
+        table[arrayindex].InsertBack(acct);
+
         return true; //job well done
     }
 }

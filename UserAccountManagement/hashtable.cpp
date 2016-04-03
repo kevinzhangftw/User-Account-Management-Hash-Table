@@ -132,10 +132,15 @@ bool HashTable::Insert(UserAccount acct){
         size++; //we will insert without fail here
         //string username = acct.GetUsername();
         int arrayindex = Hash(acct.GetUsername());
-    
-        table[arrayindex].InsertBack(acct);
-
-        return true; //job well done
+        
+        if (table[arrayindex].IsEmpty()) {
+            SLinkedList<UserAccount> accountsOnThisLinkedList; //construct new linkedlist
+            accountsOnThisLinkedList.InsertBack(acct);
+            table[arrayindex] = accountsOnThisLinkedList; //attach the linked list
+        }else{ //table[arrayindex]. Is not Empty
+            table[arrayindex].InsertBack(acct);
+        }
+        return true;
     }
 }
     

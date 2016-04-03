@@ -199,9 +199,13 @@ T* SLinkedList<T>::Retrieve(T item){
 // Returns a vector containing the list contents using push_back
 template <class T>
 vector<T> SLinkedList<T>:: Dump() const{
-    //TODO
-    vector<T> someVector;
-    return someVector;
+    vector<T> linkedlistcotents;
+    Node<T>* currentnode = front;
+    while (currentnode != NULL) {
+        linkedlistcotents.push_back(currentnode->data);
+        currentnode = currentnode->next;
+    }
+    return linkedlistcotents;
 }
 
 // OVERLOADED OPERATORS

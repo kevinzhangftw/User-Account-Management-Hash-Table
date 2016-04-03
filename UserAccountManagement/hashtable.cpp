@@ -57,18 +57,21 @@ bool HashTable:: IsPrime(int n) const{
     // Else, set array size to the smallest prime number larger than n
     //   and re-hash all contents into the new array, delete the old array and return true.
 bool HashTable:: Resize(int n){
-    //TODO:
-    // if n is smaller than current array size or if n is negative.
-    //return false
     if (n < maxsize or n < 0) {
         return false;
     }else{
-        maxsize = SmallestPrime(n);
+        for (int i = 0; i<maxsize; i++) { //we are going to access all linkedlists
+            vector<UserAccount> vectorForTableiPosition = table[i].Dump(); //vector taking a dump
+            
+            for (int j=0 ; j<vectorForTableiPosition.size(); j++) { //for every single acct in
+                Insert(vectorForTableiPosition[j]); //rehash to new table
+            }
+        }
+        int newmaxsize = SmallestPrime(n); //set array size to the smallest prime number larger than n
+        SLinkedList<UserAccount>* newtable= new SLinkedList<UserAccount>[newmaxsize];
         SLinkedList<UserAccount>* temp = table;
-        //re-hash all contents into the new array
-        
+        table = newtable;
         delete[] temp;
-        
         return true;
     }
 }
@@ -120,31 +123,26 @@ HashTable& HashTable::operator=(const HashTable& sourceht){
     //   table of smallest prime number size at least double the present table size
     //   and then insert the item.
 bool HashTable::Insert(UserAccount acct){
-    //TODO:
     // If item does not already exist,
     if (Search(acct)==true) {
         return false;
     }else{
+        if (LoadFactor() > 2/3) Resize(2*maxsize);
         size++; //we will insert without fail here
         //string username = acct.GetUsername();
         int arrayindex = Hash(acct.GetUsername());
         if (table[arrayindex].IsEmpty()) {
+            
             SLinkedList<UserAccount> accountsOnThisLinkedList; //construct new linkedlist
             accountsOnThisLinkedList.InsertBack(acct);
             table[arrayindex] = accountsOnThisLinkedList; //attach the linked list
-            return true; //job well done
+            
         }else{ //table[arrayindex]. Is not Empty
             //so we have collision here
             table[arrayindex].InsertBack(acct);
-            return true; // also job well done here
         }
+        return true; //job well done
     }
-    
-    
-    // If load factor (before insertion) is above 2/3,
-    //expand into a new table of smallest prime number size at least double the present table size
-    //   and then insert the item.
-    return false;
 }
     
     // Removal
@@ -152,9 +150,13 @@ bool HashTable::Insert(UserAccount acct){
     //   otherwise returns false
 bool HashTable::Remove(UserAccount acct){
     //TODO:
+    if (Search(acct)==true) {
+        return false;
+    }else{
     return false;
+    }
 }
-    
+
     // Search
     // Returns true if item exists, false otherwise
 bool HashTable::Search(UserAccount acct) const{

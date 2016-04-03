@@ -233,20 +233,22 @@ void LLTest(){
 //    lla.RemoveAll();
 //    lla.Contains(5); //check to see 5 is in lla
 //    
-//    vector<int> v1 = lla.Dump(); //get lla list in v1
+    vector<int> v1 = lla.Dump(); //get lla list in v1
 //    lla.InsertBack(2);
 //    lla.InsertFront(1);
 //    lla.IsEmpty(); //Returns whether the list is empty
 //    lla.Remove(3); 
 //    lla.Retrieve(1);// Returns a pointer to the in-place list item or NULL if item not found
 //    lla.Size();
-//    SLinkedList<int> lld;
-//    SLinkedList<int> lle(lld);
-    
-    
+    SLinkedList<int> lld;
+    SLinkedList<int> lle(lld);
+    vector<int> v5 = lle.Dump();
+    vector<int> v4 = lld.Dump();
     
     SLinkedList<int> llb(lla);
+    vector<int> v2 = llb.Dump();
     SLinkedList<int> llc = lla;
+    vector<int> v3 = llc.Dump();
 }
 
 void HTTest(){

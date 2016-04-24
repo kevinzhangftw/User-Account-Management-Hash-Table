@@ -103,7 +103,7 @@ bool SLinkedList<T>::Remove(T item){
             return true;
         }else if (back->data == item){ //remove back node
             Node<T>* current = front->next;
-            while (current->next != back) {
+            while (current->next != back) { //code will access violation here
                 current = current->next;
             } //now current should be previous of back
             Node<T>* temp = back;

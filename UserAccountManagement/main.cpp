@@ -1,11 +1,11 @@
-
-// File:        a5simpledriver.cpp
+// File:        a5gradingdriver.cpp
 // Author:      Geoffrey Tien
-// Date:        March 26, 2016
-// Description: Simple test driver and UI for CMPT 225 assignment 5
+// Date:        April 11, 2016
+// Description: Grading driver for CMPT 225 assignment 5
 
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -14,290 +14,460 @@
 
 using namespace std;
 
+// maximum score declarations
+const static double lltest1max = 3;
+const static double lltest2max = 2;
+const static double lltest3max = 2;
+const static double lltest4max = 4;
+const static double lltest5max = 2;
+const static double httest1max = 2;
+const static double httest2max = 5;
+const static double httest3max = 4;
+const static double httest4max = 2;
+
 // forward function declarations
-void PrintMenu(bool loginstatus, int ulevel);
-void LLTest(); //linked list test
-void HTTest(); //hash table test
+double LLTest1();
+double LLTest2();
+double LLTest3();
+double LLTest4();
+double LLTest5();
+double HTTest1();
+double HTTest2();
+double HTTest3();
+double HTTest4();
 
 // program entry point
-int main(){
-    cout << "Entering linked list test..." << endl;
-    LLTest();
-    cout << "Entering hash table test..." << endl;
-    HTTest();
-    cout << endl;
+int main()
+{
+    double lltest1score = 0;
+    double lltest2score = 0;
+    double lltest3score = 0;
+    double lltest4score = 0;
+    double lltest5score = 0;
+    double httest1score = 0;
+    double httest2score = 0;
+    double httest3score = 0;
+    double httest4score = 0;
     
-    int choice = 0;
-    string inputchoice;
-    string inputname = "";    // currently logged in user
-    string inputnewname = ""; // for adding or removing user
-    string inputoldpassword1 = "";
-    string inputoldpassword2 = "";
-    string inputnewpassword = "";
-    bool passwordmismatch = true;
-    string inputlevel = "";
-    int ilevel = 1;
+    cout << "Running linked list test 1: IsEmpty, InsertFront, Size, Contains... ";
+    lltest1score = LLTest1();
+    cout << " done.\n" << endl;
     
-    bool loggedin = false;
-    int level = REGULAR_;
+    cout << "Running linked list test 2: InsertBack, Size, Contains... ";
+    lltest2score = LLTest2();
+    cout << " done.\n" << endl;
     
-    HashTable ht;
-    // insert a default admin account
-    ht.Insert(UserAccount("admin", ADMIN_));
+    cout << "Running linked list test 3: Retrieve, Dump... ";
+    lltest3score = LLTest3();
+    cout << " done.\n" << endl;
     
-    while (choice != 7){
-        PrintMenu(loggedin, level);
-        // get the menu choice from standard input
-        getline(cin, inputchoice);
-        choice = atoi(inputchoice.c_str());
-        
-        switch (choice){
-            case 1:// log in, log out
-                if (!loggedin){
-                    cout << "Enter username: ";
-                    getline(cin, inputname);
-                    cout << "Enter password: ";
-                    getline(cin, inputoldpassword1);
-                    if (!ht.Search(UserAccount(inputname, 0))){
-                        cout << "Invalid username.\n" << endl;
-                    }else{
-                        UserAccount* ua = ht.Retrieve(UserAccount(inputname, 0)); // will not return NULL
-                        if (inputoldpassword1 != ua->GetPassword()){
-                            cout << "Invalid password.\n" << endl;
-                        }else{
-                            loggedin = true;
-                            level = ua->GetUserLevel();
-                        }
-                    }
-                }else{
-                    cout << "Logged out.\n" << endl;
-                    loggedin = false;
-                    level = REGULAR_;
-                    // clear local variables for next login
-                    inputname = "";
-                    inputnewname = "";
-                    inputoldpassword1 = "";
-                    inputoldpassword2 = "";
-                    inputnewpassword = "";
-                    passwordmismatch = true;
-                }
-                break;
-            case 2:// change password
-                if (loggedin){
-                    passwordmismatch = true;
-                    while (passwordmismatch && inputoldpassword1 != "quit"){
-                        cout << "Enter old password or type quit to exit: ";
-                        getline(cin, inputoldpassword1);
-                        if (inputoldpassword1 != "quit"){
-                            cout << "Enter old password again: ";
-                            getline(cin, inputoldpassword2);
-                            passwordmismatch = (inputoldpassword1 != inputoldpassword2);
-                        }else{
-                            passwordmismatch = false;
-                        }
-                    }
-                    if (inputoldpassword1 != "quit"){
-                        cout << "Enter new password: ";
-                        getline(cin, inputnewpassword);
-                        if (ht.Retrieve(UserAccount(inputname, 0))->SetPassword(inputoldpassword1, inputnewpassword))
-                            cout << "Password updated.\n" << endl;
-                        else
-                            cout << "Error updating password.\n" << endl;
-                    }
-                }
-                break;
-            case 3:// admin-only, add new user
-                if (loggedin && level == ADMIN_){
-                    cout << "Enter new username (lowercase only): ";
-                    getline(cin, inputnewname);
-                    cout << "Enter access level (0 = ADMIN, 1 = REGULAR): ";
-                    getline(cin, inputlevel);
-                    ilevel = atoi(inputlevel.c_str());
-                    if (ht.Insert(UserAccount(inputnewname, ilevel)))
-                        cout << "New user " << inputnewname << " added.\n" << endl;
-                    else
-                        cout << "Error adding user.\n" << endl;
-                }
-                break;
-            case 4:// admin-only, reset user password
-                if (loggedin && level == ADMIN_){
-                    cout << "Enter username for password reset: ";
-                    getline(cin, inputnewname);
-                    if (!ht.Search(UserAccount(inputnewname, 0))){
-                        cout << "Invalid username.\n" << endl;
-                    }else{
-                        UserAccount* uap = ht.Retrieve(UserAccount(inputnewname, 0));
-                        uap->SetPassword(uap->GetPassword(), "password");
-                        cout << "Password for user " << uap->GetUsername() << " reset to default.\n" << endl;
-                    }
-                }
-                break;
-            case 5:// admin-only, edit user level
-                if (loggedin && level == ADMIN_){
-                    cout << "Enter username for access level edit: ";
-                    getline(cin, inputnewname);
-                    if (inputnewname == "admin"){
-                        cout << "Cannot edit access level of admin.\n" << endl;
-                    }else if (!ht.Search(UserAccount(inputnewname, 0))){
-                        cout << "Invalid username.\n" << endl;
-                    }else{
-                        cout << "Enter new access level (0 = ADMIN, 1 = REGULAR): ";
-                        getline(cin, inputlevel);
-                        ilevel = atoi(inputlevel.c_str());
-                        UserAccount* uap = ht.Retrieve(UserAccount(inputnewname, 0));
-                        if (uap->SetUserLevel(ilevel))
-                            cout << "Access level for user " << uap->GetUsername() << " successfully changed.\n" << endl;
-                        else
-                            cout << "Error setting access level for user " << uap->GetUsername() << ".\n" << endl;
-                    }
-                }
-                break;
-            case 6:// admin-only, remove user
-                if (loggedin && level == ADMIN_){
-                    cout << "Enter username to remove: ";
-                    getline(cin, inputnewname);
-                    if (inputnewname == "admin"){
-                        cout << "Cannot remove admin.\n" << endl;
-                    }else if (ht.Remove(UserAccount(inputnewname, 0))){
-                        cout << "User " << inputnewname << " removed.\n" << endl;
-                    }else{
-                        cout << "Error removing user " << inputnewname << ".\n" << endl;
-                    }
-                }
-                break;
-            case 7:
-                // do nothing, causes while loop to exit
-                break;
-            default:
-                break;
-        }
-    }
+    cout << "Running linked list test 4: Remove, RemoveAll... ";
+    lltest4score = LLTest4();
+    cout << " done.\n" << endl;
     
+    cout << "Running linked list test 5: copy constructor, operator=... ";
+    lltest5score = LLTest5();
+    cout << " done.\n" << endl;
+    
+    cout << "Running hash table test 1: default constructor, Size, MaxSize, Insert (no expansion), ListAt... ";
+    httest1score = HTTest1();
+    cout << " done.\n" << endl;
+    
+    cout << "Running hash table test 2: parameterized constructor, Insert (with expansion), MaxSize, ListAt... ";
+    httest2score = HTTest2();
+    cout << " done.\n" << endl;
+    
+    cout << "Running hash table test 3: Remove, Search, Retrieve... ";
+    httest3score = HTTest3();
+    cout << " done.\n" << endl;
+    
+    cout << "Running hash table test 4: copy constructor, operator=... ";
+    httest4score = HTTest4();
+    cout << " done.\n" << endl;
+    
+    // compute total and maximum scores
+    double testscoresum = lltest1score + lltest2score + lltest3score + lltest4score +
+    lltest5score +
+    httest1score + httest2score + httest3score + httest4score;
+    
+    double testmax = lltest1max + lltest2max + lltest3max + lltest4max +
+    lltest5max +
+    httest1max + httest2max + httest3max + httest4max;
+    
+    // format a string for summary output
+    cout << "Test summary\n------------------------------------------------------------" << endl;
+    string summary;
+    ostringstream oss;
+    oss << "LLTest1: " << lltest1score << "/" << lltest1max << "\tLLTest2: " << lltest2score << "/" << lltest2max
+    << "\tLLTest3: " << lltest3score << "/" << lltest3max << endl
+    << "LLTest4: " << lltest4score << "/" << lltest4max << "\tLLTest5: " << lltest5score << "/" << lltest5max << endl << endl
+    << "HTTest1: " << httest1score << "/" << httest1max << "\tHTTest2: " << httest2score << "/" << httest2max
+    << "\tHTTest3: " << httest3score << "/" << httest3max << endl
+    << "HTTest4: " << httest4score << "/" << httest4max << endl
+    << "------------------------------------------------------------" << endl
+    << "Total: " << testscoresum << "/" << testmax << endl;
+    cout << oss.str() << endl;
+    
+    system("pause");
     return 0;
 }
 
-void PrintMenu(bool loginstatus, int ulevel){
-    if (!loginstatus){
-        cout << "****************************************************\n"
-        << "* Please select an option:                         *\n"
-        << "* 1. Login                     7. Quit             *\n"
-        << "****************************************************\n" << endl;
-        cout << "Enter your choice: ";
-    }else{
-        if (ulevel == ADMIN_){
-            cout << "****************************************************\n"
-            << "* Please select an option:                         *\n"
-            << "* 1. Logout                    6. Remove a user    *\n"
-            << "* 2. Change password                               *\n"
-            << "* 3. Add a new user                                *\n"
-            << "* 4. Reset user password                           *\n"
-            << "* 5. Edit user level           7. Quit             *\n"
-            << "****************************************************\n" << endl;
-            cout << "Enter your choice: ";
-        }else{
-            cout << "****************************************************\n"
-            << "* Please select an option:                         *\n"
-            << "* 1. Logout                    7. Quit             *\n"
-            << "* 2. Change password                               *\n"
-            << "****************************************************\n" << endl;
-            cout << "Enter your choice: ";
-        }
-    }
-}
-
-void destructorTest(){
-    SLinkedList<int> llx;
+// IsEmpty, InsertFront, Size, Contains
+double LLTest1()
+{
+    double score = 0;
     
-    llx.InsertBack(2);
-    llx.InsertFront(1);
-    llx.InsertBack(3);
-    llx.InsertBack(4);
-    llx.InsertBack(5);
-    llx.InsertBack(10);
-    llx.InsertBack(20);
+    // test empty and size 0
+    SLinkedList<int> lla;
+    if (lla.IsEmpty() && lla.Size() == 0)
+        score += 0.5;
+    
+    // search empty list for an item
+    if (!lla.Contains(17))
+        score += 0.5;
+    
+    // add the first item
+    lla.InsertFront(5);
+    if ((!lla.IsEmpty()) && lla.Size() == 1 && lla.Contains(5))
+        score += 1;
+    
+    // add another two items
+    lla.InsertFront(7);
+    lla.InsertFront(9);
+    if ((!lla.IsEmpty()) && lla.Size() == 3 && lla.Contains(5) && lla.Contains(7) && lla.Contains(9))
+        score += 0.5;
+    
+    // search for non-existent item
+    if (!lla.Contains(17))
+        score += 0.5;
+    
+    return score;
 }
 
-void LLTest(){
+// InsertBack, Size, Contains
+double LLTest2()
+{
+    double score = 0;
+    
+    SLinkedList<int> lla;
+    if (lla.IsEmpty() && lla.Size() == 0)
+    {
+        lla.InsertBack(5);
+        if ((!lla.IsEmpty()) && lla.Size() == 1 && lla.Contains(5))
+            score += 1;
+    }
+    
+    SLinkedList<int> llb;
+    llb.InsertBack(7);
+    llb.InsertFront(5); // together with InsertFront
+    llb.InsertBack(9);
+    if ((!llb.IsEmpty()) && llb.Size() == 3 && llb.Contains(5) && llb.Contains(7) && llb.Contains(9))
+        score += 0.5;
+    
+    // search for non-existent item
+    if (!lla.Contains(17))
+        score += 0.5;
+    
+    return score;
+}
+
+// Retrieve, Dump
+double LLTest3()
+{
+    double score = 0;
+    
+    SLinkedList<double> lla;
+    
+    lla.InsertBack(5);
+    lla.InsertBack(7);
+    lla.InsertBack(9);
+    
+    double* dptra;
+    dptra = lla.Retrieve(17);
+    if (dptra == NULL)
+        score += 0.5;
+    
+    double* dptrb;
+    dptrb = lla.Retrieve(7);
+    if (*dptrb == 7)
+    {
+        score += 0.5;
+        *dptrb = 6;
+        if (lla.Size() == 3 && lla.Contains(5) && lla.Contains(6) && lla.Contains(9) && !lla.Contains(7))
+            score += 0.5;
+    }
+    
+    vector<double> vd = lla.Dump();
+    if (vd.size() == 3 && vd.at(0) == 5 && vd.at(1) == 6 && vd.at(2) == 9)
+        score += 0.5;
+    
+    return score;
+}
+
+// Remove, RemoveAll
+double LLTest4()
+{
+    double score = 0;
+    
     SLinkedList<int> lla;
     
-    lla.InsertBack(2);
-    lla.InsertFront(1);
-    lla.InsertBack(3);
-    lla.InsertBack(4);
+    // Remove from empty list
+    if (!lla.Remove(3))
+        score += 0.5;
+    
     lla.InsertBack(5);
-    lla.InsertBack(10);
-    lla.InsertBack(20);
+    lla.InsertBack(6);
+    lla.InsertBack(7);
+    lla.InsertBack(8);
     
-    //destructorTest();
+    if (!lla.Remove(17) && lla.Size() == 4)
+        score += 0.5;
     
-//    lla.RemoveAll();
-//    lla.Contains(5); //check to see 5 is in lla
-//    
-    vector<int> v1 = lla.Dump(); //get lla list in v1
-//    lla.InsertBack(2);
-//    lla.InsertFront(1);
-//    lla.IsEmpty(); //Returns whether the list is empty
-//    lla.Remove(3); 
-//    lla.Retrieve(1);// Returns a pointer to the in-place list item or NULL if item not found
-//    lla.Size();
+    if (lla.Size() == 4)
+    {
+        if (lla.Remove(5) && lla.Size() == 3 && !lla.Contains(5))
+            score += 0.5;
+    }
+    
+    SLinkedList<int> llb;
+    llb.InsertBack(5);
+    llb.InsertBack(6);
+    llb.InsertBack(7);
+    llb.InsertBack(8);
+    if (llb.Size() == 4)
+    {
+        if (llb.Remove(8) && llb.Size() == 3 && !llb.Contains(8))
+            score += 0.5;
+    }
+    
+    SLinkedList<int> llc;
+    llc.InsertBack(5);
+    llc.InsertBack(6);
+    llc.InsertBack(7);
+    llc.InsertBack(8);
+    if (llc.Size() == 4)
+    {
+        if (llc.Remove(6) && llc.Size() == 3 && !llc.Contains(6))
+            score += 0.5;
+    }
+    
     SLinkedList<int> lld;
-    SLinkedList<int> lle(lld);
-    vector<int> v5 = lle.Dump();
-    vector<int> v4 = lld.Dump();
+    lld.InsertBack(3);
+    lld.InsertBack(4);
+    if (lld.Size() == 2)
+    {
+        if (lld.Remove(4) && lld.Remove(3) && lld.IsEmpty())
+            score += 0.5;
+    }
     
-    SLinkedList<int> llb(lla);
-    vector<int> v2 = llb.Dump();
-    SLinkedList<int> llc = lla;
-    vector<int> v3 = llc.Dump();
+    SLinkedList<int> lle;
+    lle.InsertBack(5);
+    lle.InsertBack(6);
+    lle.InsertBack(7);
+    lle.InsertBack(8);
+    if (lle.Size() == 4)
+    {
+        lle.RemoveAll();
+        if (lle.IsEmpty())
+            score += 1;
+    }
+    
+    return score;
 }
 
-void HTTest(){
-    HashTable ht1; //hash table of size 101
-    HashTable ht2(5);//hash table of 10?
+// copy constructor, operator=
+double LLTest5()
+{
+    double score = 0;
+    
+    SLinkedList<int> lla;
+    lla.InsertBack(4);
+    lla.InsertBack(5);
+    lla.InsertBack(6);
+    lla.InsertBack(7);
+    
+    SLinkedList<int> llb(lla);
+    lla.InsertBack(8);
+    llb.Remove(4);
+    if (lla.Size() == 5 && lla.Contains(4) && lla.Contains(8))
+        score += 0.5;
+    if (llb.Size() == 3 && !llb.Contains(4) && !llb.Contains(8))
+        score += 0.5;
+    
+    SLinkedList<int> llc;
+    llc.InsertBack(9);
+    llc.InsertBack(10);
+    llc.InsertBack(11);
+    llc.InsertBack(12);
+    
+    llb = llc;
+    llc.InsertBack(13);
+    llb.Remove(9);
+    if (llc.Size() == 5 && llc.Contains(9) && llc.Contains(13))
+        score += 0.5;
+    if (llb.Size() == 3 && !llb.Contains(9) && !llb.Contains(13))
+        score += 0.5;
+    
+    return score;
+}
 
+// default constructor, Size, MaxSize, Insert (no expansion), ListAt
+double HTTest1()
+{
+    double score = 0;
     
-    ht2.Insert(UserAccount("admin", ADMIN_));
-    ht2.Insert(UserAccount("bob", REGULAR_));
-    ht2.Insert(UserAccount("cat", REGULAR_));
-    ht2.Insert(UserAccount("kai", REGULAR_));
-    ht2.Insert(UserAccount("kevin", REGULAR_));
-    ht2.Insert(UserAccount("june", REGULAR_));
-    ht2.Insert(UserAccount("henry", REGULAR_));
-    ht2.Insert(UserAccount("ken", REGULAR_));
+    HashTable ht1;
+    if (ht1.Size() == 0 && ht1.MaxSize() == 101)
+    {
+        bool listsempty = true;
+        for (int i = 0; i < ht1.MaxSize(); i++)
+        {
+            listsempty = listsempty && ht1.ListAt(i)->IsEmpty();
+        }
+        if (listsempty)
+            score += 0.5;
+    }
     
-    bool targetfound = ht2.Search(UserAccount("bob", ADMIN_));
-    cout << "target bob found before resize is "<< targetfound << endl;
+    // Insert 4 items: 3 unique, into 2 different indices
+    bool insertresult = true;
+    insertresult = insertresult && ht1.Insert(UserAccount("bob", REGULAR_)); // hash index: 5
+    insertresult = insertresult && ht1.Insert(UserAccount("max", REGULAR_)); // hash index: 36
+    insertresult = insertresult && ht1.Insert(UserAccount("cj", REGULAR_));  // hash index: 5
+    insertresult = insertresult && !ht1.Insert(UserAccount("bob", ADMIN_));  // hash index: 5, duplicate username
+    if (insertresult && ht1.Size() == 3)
+        score += 0.5;
+    if (ht1.ListAt(5)->Size() == 2 && ht1.ListAt(36)->Size() == 1 && ht1.ListAt(48)->Size() == 0)
+        score += 1;
     
-    ht2.Insert(UserAccount("erne", REGULAR_));
+    return score;
+}
+
+// parameterized constructor, Insert (with expansion), MaxSize, ListAt
+double HTTest2()
+{
+    double score = 0;
     
-    bool targetfound1 = ht2.Search(UserAccount("bob", ADMIN_));
-    cout << "target bob found after resize is "<< targetfound1 << endl;
+    HashTable ht1(2); // maxsize: 5
+    if (ht1.Size() == 0 && ht1.MaxSize() == 5)
+    {
+        bool listsempty = true;
+        for (int i = 0; i < ht1.MaxSize(); i++)
+        {
+            listsempty = listsempty && ht1.ListAt(i)->IsEmpty();
+        }
+        if (listsempty)
+            score += 0.5;
+    }
     
-    ht2.Insert(UserAccount("john", REGULAR_));
-    ht2.Insert(UserAccount("mircea", REGULAR_));
-    ht2.Insert(UserAccount("jordan", REGULAR_));
-    ht2.Insert(UserAccount("engadget", REGULAR_));
-    ht2.Insert(UserAccount("grapes", REGULAR_));
-    ht2.Insert(UserAccount("camvy", REGULAR_));
-    ht2.Insert(UserAccount("transient", REGULAR_));
-    ht2.Insert(UserAccount("oranges", REGULAR_));
+    // Insert 4 unique items, into same index 0
+    bool insertresult = true;
+    insertresult = insertresult && ht1.Insert(UserAccount("hd", REGULAR_)); // 7 after resize
+    insertresult = insertresult && ht1.Insert(UserAccount("md", REGULAR_)); // 2 after resize
+    insertresult = insertresult && ht1.Insert(UserAccount("tj", REGULAR_)); // 1 after resize
+    insertresult = insertresult && ht1.Insert(UserAccount("kc", REGULAR_)); // 3 after resize
+    if (insertresult && ht1.Size() == 4)
+        score += 0.5;
+    if (ht1.LoadFactor() == 0.8)
+        score += 0.5;
+    if (ht1.ListAt(0)->Size() == 4 && ht1.ListAt(1)->Size() == 0 && ht1.ListAt(2)->Size() == 0 && ht1.ListAt(3)->Size() == 0 && ht1.ListAt(4)->Size() == 0)
+        score += 1;
     
-    bool targetfound2 = ht2.Search(UserAccount("transient", ADMIN_));
-    cout << "is tranisent found?  "<< targetfound2 << endl;
+    // expand the array
+    insertresult = insertresult && ht1.Insert(UserAccount("ju", REGULAR_)); // 0 after resize
+    if (insertresult && ht1.Size() == 5 && ht1.MaxSize() == 11)
+        score += 0.5;
+    if (ht1.LoadFactor() == (double) 5 / (double) 11)
+        score += 0.5;
+    if (ht1.ListAt(0)->Size() == 1 && ht1.ListAt(1)->Size() == 1 && ht1.ListAt(2)->Size() == 1 && ht1.ListAt(3)->Size() == 1 && ht1.ListAt(4)->Size() == 0 && ht1.ListAt(7)->Size() == 1)
+        score += 1.5;
     
-    //bool targetfound = ht1.Search(UserAccount("steven", ADMIN_));
-    //cout << "target found is "<< targetfound << endl;
-    //UserAccount* userfound = ht1.Retrieve(UserAccount("bob", REGULAR_));
+    return score;
+}
+
+// Remove, Search, Retrieve
+double HTTest3()
+{
+    double score = 0;
     
-    ht2.Size();
-    ht2.MaxSize();//size of underlying array
-    ht2.ListAt(0);
-    ht2.LoadFactor();
-    ht2.Insert(UserAccount("admin", ADMIN_));
-    ht2.Remove(UserAccount("bob", REGULAR_));
+    HashTable ht1;
     
-    bool targetfound3 = ht2.Search(UserAccount("bob", REGULAR_));
-    cout << "target bob found after removal is "<< targetfound3 << endl;
+    // empty table
+    if (!ht1.Search(UserAccount("bob", REGULAR_)))
+        score += 0.5;
+    if (!ht1.Remove(UserAccount("bob", ADMIN_)))
+        score += 0.5;
     
-    HashTable ht3 = ht1;
+    bool insertresult = true;
+    insertresult = insertresult && ht1.Insert(UserAccount("bob", REGULAR_)); // hash index: 5
+    insertresult = insertresult && ht1.Insert(UserAccount("max", REGULAR_)); // hash index: 36
+    insertresult = insertresult && ht1.Insert(UserAccount("cj", REGULAR_));  // hash index: 5
+    if (insertresult)
+    {
+        if (!ht1.Search(UserAccount("fo", REGULAR_))) // hash index: 5, non-existent
+            score += 0.5;
+        if (ht1.Search(UserAccount("bob", ADMIN_))) // match on username
+            score += 0.5;
+        
+        UserAccount* uap = ht1.Retrieve(UserAccount("fo", ADMIN_));
+        if (uap == NULL)
+            score += 0.5;
+        uap = ht1.Retrieve(UserAccount("bob", ADMIN_));
+        if (uap != NULL)
+            uap->SetPassword("password", "mynewpassword");
+        UserAccount* uap2 = ht1.Retrieve(UserAccount("bob", REGULAR_));
+        if (uap2 != NULL && uap2->GetPassword() == "mynewpassword")
+            score += 0.5;
+        
+        if (!ht1.Remove(UserAccount("fo", REGULAR_)))
+            score += 0.5;
+        if (ht1.Remove(UserAccount("bob", ADMIN_)) && ht1.Size() == 2)
+            score += 0.5;
+    }
+    
+    return score;
+}
+
+// copy constructor, operator=
+double HTTest4()
+{
+    double score = 0;
+    
+    HashTable ht1(5);
+    // 3 items into index 0
+    ht1.Insert(UserAccount("cc", REGULAR_));
+    ht1.Insert(UserAccount("dd", REGULAR_));
+    ht1.Insert(UserAccount("ee", REGULAR_));
+    if (ht1.Size() == 3 && ht1.ListAt(0)->Size() == 3)
+    {
+        HashTable ht2(ht1);
+        if (ht2.Size() == 3 && ht2.ListAt(0)->Size() == 3)
+        {
+            score += 0.5;
+            ht1.Insert(UserAccount("ff", REGULAR_));
+            ht2.Remove(UserAccount("cc", REGULAR_));
+            if (ht1.Size() == 4 && ht2.Size() == 2 && ht1.Search(UserAccount("cc", REGULAR_)) && 
+                !ht2.Search(UserAccount("cc", REGULAR_)) && !ht2.Search(UserAccount("ff", REGULAR_)))
+                score += 0.5;
+        }
+    }
+    
+    
+    HashTable ht3;
+    ht3.Insert(UserAccount("aaa", ADMIN_));
+    ht3.Insert(UserAccount("bbb", REGULAR_));
+    if (ht3.Size() == 2)
+    {
+        ht3 = ht1;
+        if (ht3.Size() == 4 && ht3.ListAt(0)->Size() == 4)
+        {
+            score += 0.5;
+            ht1.Remove(UserAccount("cc", REGULAR_));
+            ht1.Remove(UserAccount("ff", REGULAR_));
+            if (ht3.Size() == 4 && ht3.ListAt(0)->Size() == 4 &&
+                ht3.Search(UserAccount("cc", REGULAR_)) && ht3.Search(UserAccount("ff", REGULAR_)))
+                score += 0.5;
+        }
+    }
+    
+    return score;
 }
